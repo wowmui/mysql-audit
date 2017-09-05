@@ -285,6 +285,8 @@ void Audit_handler::log_audit(ThdSesData *pThdData)
 				}
 				pthread_mutex_unlock(&LOCK_io);
 			}
+			else
+				sql_print_error("Sucessed log a audit json.");
 		}		
 	}
 	unlock();
@@ -696,7 +698,7 @@ ssize_t Audit_json_formatter::start_msg_format(IWriter *writer)
 	yajl_add_string_val(gen, "msg-type", "header");
 	uint64 ts = my_getsystime() / (10000);
 	yajl_add_uint64(gen, "date", ts);
-	yajl_add_string_val(gen, "audit-version", MYSQL_AUDIT_PLUGIN_VERSION"-"MYSQL_AUDIT_PLUGIN_REVISION);
+	yajl_add_string_val(gen, "audit-version", MYSQL_AUDIT_PLUGIN_VERSION "-" MYSQL_AUDIT_PLUGIN_REVISION);
 	yajl_add_string_val(gen, "audit-protocol-version", AUDIT_PROTOCOL_VERSION);
 	yajl_add_string_val(gen, "hostname", glob_hostname);
 	yajl_add_string_val(gen, "mysql-version", server_version);
@@ -1070,7 +1072,12 @@ ssize_t Audit_json_formatter::event_format(ThdSesData *pThdData, IWriter *writer
 		size_t len = 0;
 		yajl_gen_get_buf(gen, &text, &len);
 		// print the json
-		res = writer->write((const char *)text, len);		
+		res = writer->write((const char *)text, len);
+		if (res >= 0)
+		{
+			const char *p2 = static_cast<const char*>( static_cast<void*>( const_cast<unsigned char*>(text)));
+			sql_print_error("%s,%s", text, p2);
+		}
 	}
 	yajl_gen_free(gen); // free the generator
 	return res;
