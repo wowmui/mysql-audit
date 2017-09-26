@@ -285,8 +285,6 @@ void Audit_handler::log_audit(ThdSesData *pThdData)
 				}
 				pthread_mutex_unlock(&LOCK_io);
 			}
-			else
-				sql_print_error("Sucessed log a audit json.");
 		}		
 	}
 	unlock();
@@ -1072,12 +1070,7 @@ ssize_t Audit_json_formatter::event_format(ThdSesData *pThdData, IWriter *writer
 		size_t len = 0;
 		yajl_gen_get_buf(gen, &text, &len);
 		// print the json
-		res = writer->write((const char *)text, len);
-		if (res >= 0)
-		{
-			const char *p2 = static_cast<const char*>( static_cast<void*>( const_cast<unsigned char*>(text)));
-			sql_print_error("%s,%s", text, p2);
-		}
+		res = writer->write((const char *)text, len);		
 	}
 	yajl_gen_free(gen); // free the generator
 	return res;
