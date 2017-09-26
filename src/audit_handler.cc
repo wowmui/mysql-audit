@@ -1059,6 +1059,7 @@ ssize_t Audit_json_formatter::event_format(ThdSesData *pThdData, IWriter *writer
 			yajl_add_string_val(gen, "query", "n/a", strlen("n/a"));
 		}
 	}
+	yajl_add_uint64(gen, "server_id", server_id);
 
 	ssize_t res = -2;
 	yajl_gen_status stat = yajl_gen_map_close(gen); // close the object
