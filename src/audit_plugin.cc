@@ -388,7 +388,7 @@ PeerInfo *retrieve_peerinfo(THD *thd)
 	{
 		PeerInfo *peer = (PeerInfo *) THDVAR(thd, peer_info);
 
-		if (THDVAR(thd, peer_is_uds) && peer != NULL)//;
+		if (THDVAR(thd, peer_is_uds) && peer != NULL)
 		{
 			return peer;
 		}
